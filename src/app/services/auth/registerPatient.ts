@@ -1,9 +1,58 @@
+"use server";
+import z from "zod";
+
+const registerValidationZodSchema = z
+  .object({
+    name: z.string().min(1, { message: "Name is required" }),
+    address: z.string().optional(),
+    email: z.email({ message: "Valid email is required" }),
+    password: z
+      .string()
+      .min(6, {
+        error: "Password is required and must be at least 6 characters long",
+      })
+      .max(100, {
+        error: "Password must be at most 100 characters long",
+      }),
+    confirmPassword: z.string().min(6, {
+      error:
+        "Confirm Password is required and must be at least 6 characters long",
+    }),
+  })
+  .refine((data: any) => data.password === data.confirmPassword, {
+    error: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export const registerPatient = async (
   _currentState: any,
   formData: any,
 ): Promise<any> => {
   try {
-    // console.log(formData.get("name"), "FormData");
+    const validationData = {
+      name: formData.get("name"),
+      address: formData.get("address"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    };
+
+    const validatedFields =
+      registerValidationZodSchema.safeParse(validationData);
+    console.log(validatedFields, "Validated Fields");
+
+    if (!validatedFields.success) {
+      return {
+        success: false,
+        errors: validatedFields.error.issues.map((issue) => {
+          // console.log(issue.path[0], issue.message);
+          return {
+            field: issue.path[0],
+            message: issue.message,
+          };
+        }),
+      };
+    }
 
     const registerData = {
       password: formData.get("password"),
@@ -13,9 +62,9 @@ export const registerPatient = async (
         email: formData.get("email"),
       },
     };
-    // console.log(registerData);
+
     const newFormData = new FormData();
-    // console.log(newFormData);
+
     newFormData.append("data", JSON.stringify(registerData));
 
     const res = await fetch(
@@ -25,7 +74,10 @@ export const registerPatient = async (
         body: newFormData,
       },
     ).then((res) => res.json());
-    console.log(res, "Response");
+
+    console.log(res, "res");
+
+    return res;
   } catch (error) {
     console.log(error);
     return { error: "Registration failed" };
