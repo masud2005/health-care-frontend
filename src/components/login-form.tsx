@@ -1,40 +1,86 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+import { useActionState } from "react";
+import { Button } from "./ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { loginUser } from "@/app/services/auth/loginUser";
 
 const LoginForm = () => {
+  const [state, formAction, isPending] = useActionState(loginUser, null);
+
+  const getFieldError = (fieldName: string) => {
+    if (state && !state.success && state.errors) {
+      const fieldError = state.errors.find(
+        (error: any) => error.field === fieldName,
+      );
+      // console.log(fieldError);
+      return fieldError ? fieldError.message : null;
+    }
+    return null;
+  };
+  // console.log(state);
   return (
-    <form>
+    <form action={formAction}>
       <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" type="email" placeholder="m@example.com" required />
-        </Field>
-        <Field>
-          <div className="flex items-center">
+        <div className="grid grid-cols-1 gap-4">
+          {/* Email */}
+          <Field>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="m@example.com"
+              //   required
+            />
+
+            {getFieldError("email") && (
+              <FieldDescription className="text-red-600">
+                {getFieldError("email")}
+              </FieldDescription>
+            )}
+          </Field>
+
+          {/* Password */}
+          <Field>
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <a
-              href="#"
-              className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
-          <Input id="password" type="password" required />
-        </Field>
-        <Field>
-          <Button type="submit">Login</Button>
-          <Button variant="outline" type="button">
-            Login with Google
-          </Button>
-          <FieldDescription className="text-center">
-            Don&apos;t have an account?{" "}
-            <a href="/register" className="underline">
-              Register
-            </a>
-          </FieldDescription>
-        </Field>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Enter your password"
+              //   required
+            />
+            {getFieldError("password") && (
+              <FieldDescription className="text-red-600">
+                {getFieldError("password")}
+              </FieldDescription>
+            )}
+          </Field>
+        </div>
+        <FieldGroup className="mt-4">
+          <Field>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Logging in..." : "Login"}
+            </Button>
+
+            <FieldDescription className="px-6 text-center">
+              Don&apos;t have an account?{" "}
+              <a href="/register" className="text-blue-600 hover:underline">
+                Sign up
+              </a>
+            </FieldDescription>
+            <FieldDescription className="px-6 text-center">
+              <a
+                href="/forget-password"
+                className="text-blue-600 hover:underline"
+              >
+                Forgot password?
+              </a>
+            </FieldDescription>
+          </Field>
+        </FieldGroup>
       </FieldGroup>
     </form>
   );
