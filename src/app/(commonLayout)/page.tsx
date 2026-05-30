@@ -4,7 +4,7 @@ import Steps from "@/components/modules/home/Steps";
 import Testimonials from "@/components/modules/home/Testimonials";
 import TopRatedDoctors from "@/components/modules/home/TopRatedDoctors";
 
-const Home = () => {
+const HomePage = () => {
     return (
         <div>
             <Hero />
@@ -16,4 +16,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default HomePage;

@@ -1,9 +1,17 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
 
 const Navbar = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const navItems = [
     { href: "#", label: "Consultation" },
     { href: "#", label: "Health Plans" },
@@ -31,39 +39,51 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-2">
-          <Link href="/login" className="text-lg font-medium">
-            <Button>Login</Button>
-          </Link>
+          <Button asChild>
+            <Link href="/login" className="text-lg font-medium">
+              Login
+            </Link>
+          </Button>
         </div>
 
         {/* Mobile Menu */}
 
         <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline"> <Menu/> </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-75 sm:w-100 p-4">
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <nav className="flex flex-col space-y-4 mt-8">
-                {navItems.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="text-lg font-medium"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="border-t pt-4 flex flex-col space-y-4">
-                  <div className="flex justify-center"></div>
-                  <Link href="/login" className="text-lg font-medium">
-                    <Button>Login</Button>
-                  </Link>
-                </div>
-              </nav>
-            </SheetContent>
-          </Sheet>
+          {isMounted ? (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" aria-label="Open menu">
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-75 sm:w-100 p-4">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <nav className="flex flex-col space-y-4 mt-8">
+                  {navItems.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="text-lg font-medium"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <div className="border-t pt-4 flex flex-col space-y-4">
+                    <div className="flex justify-center"></div>
+                    <Button asChild>
+                      <Link href="/login" className="text-lg font-medium">
+                        Login
+                      </Link>
+                    </Button>
+                  </div>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          ) : (
+            <Button variant="outline" size="icon" aria-label="Open menu" disabled>
+              <Menu />
+            </Button>
+          )}
         </div>
       </div>
     </header>

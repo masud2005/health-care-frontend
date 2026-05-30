@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -98,7 +100,7 @@ function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-4 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Health Care. All Rights Reserved.
+          &copy; {currentYear} Health Care. All Rights Reserved.
         </div>
       </div>
     </footer>
