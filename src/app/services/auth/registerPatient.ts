@@ -1,5 +1,6 @@
 "use server";
 import z from "zod";
+import { loginUser } from "./loginUser";
 
 const registerValidationZodSchema = z
   .object({
@@ -73,12 +74,26 @@ export const registerPatient = async (
         method: "POST",
         body: newFormData,
       },
-    ).then((res) => res.json());
+    );
 
-    console.log(res, "res");
+    const result = await res.json();
 
-    return res;
-  } catch (error) {
+    if (result.success) {
+      // const loginData = {
+      //   email: formData.get("email"),
+      //   password: formData.get("password"),
+      // };
+      await loginUser(_currentState, formData);
+    }
+
+    // console.log(res, "res");
+
+    return result;
+  } catch (error: any) {
+    // Re-throw NEXT_REDIRECT errors so Next.js can handle them
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
     console.log(error);
     return { error: "Registration failed" };
   }
