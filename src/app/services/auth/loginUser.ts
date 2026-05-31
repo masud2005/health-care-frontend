@@ -122,6 +122,8 @@ export const loginUser = async (
       } else {
         redirect(getDefaultDashboardRoute(userRole));
       }
+    } else {
+      redirect(getDefaultDashboardRoute(userRole));
     }
   } catch (error: any) {
     // Re-throw NEXT_REDIRECT errors so Next.js can handle them
