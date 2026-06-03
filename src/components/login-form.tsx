@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button } from "./ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
-import { loginUser } from "@/app/services/auth/loginUser";
+import { loginUser } from "@/services/auth/loginUser";
 
 const LoginForm = ({redirect}: {redirect?: string}) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
