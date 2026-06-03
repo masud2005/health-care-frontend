@@ -1,17 +1,11 @@
-"use client";
+import { Menu } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { Menu } from "lucide-react";
+import LogoutButton from "./LogoutButton";
+import { getCookie } from "@/services/auth/tokenHandler";
 
-const Navbar = () => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
+const PublicNavbar = async () => {
   const navItems = [
     { href: "#", label: "Consultation" },
     { href: "#", label: "Health Plans" },
@@ -19,6 +13,9 @@ const Navbar = () => {
     { href: "#", label: "Diagnostics" },
     { href: "#", label: "NGOs" },
   ];
+
+  const accessToken = await getCookie("accessToken");
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur  dark:bg-background/95">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -39,55 +36,54 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-2">
-          <Button asChild>
-            <Link href="/login" className="text-lg font-medium">
-              Login
+          {accessToken ? (
+            <LogoutButton />
+          ) : (
+            <Link href="/login">
+              <Button>Login</Button>
             </Link>
-          </Button>
+          )}
         </div>
 
         {/* Mobile Menu */}
 
         <div className="md:hidden">
-          {isMounted ? (
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon" aria-label="Open menu">
-                  <Menu />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-75 sm:w-100 p-4">
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                <nav className="flex flex-col space-y-4 mt-8">
-                  {navItems.map((link) => (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      className="text-lg font-medium"
-                    >
-                      {link.label}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline">
+                {" "}
+                <Menu />{" "}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] p-4">
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              <nav className="flex flex-col space-y-4 mt-8">
+                {navItems.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-lg font-medium"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="border-t pt-4 flex flex-col space-y-4">
+                  <div className="flex justify-center"></div>
+                  {accessToken ? (
+                    <LogoutButton />
+                  ) : (
+                    <Link href="/login">
+                      <Button>Login</Button>
                     </Link>
-                  ))}
-                  <div className="border-t pt-4 flex flex-col space-y-4">
-                    <div className="flex justify-center"></div>
-                    <Button asChild>
-                      <Link href="/login" className="text-lg font-medium">
-                        Login
-                      </Link>
-                    </Button>
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          ) : (
-            <Button variant="outline" size="icon" aria-label="Open menu" disabled>
-              <Menu />
-            </Button>
-          )}
+                  )}
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
   );
 };
 
-export default Navbar;
+export default PublicNavbar;
