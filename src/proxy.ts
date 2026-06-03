@@ -8,14 +8,16 @@ import {
   isAuthRoute,
   UserRole,
 } from "./lib/auth-utils";
+import { deleteCookie, getCookie } from "./services/auth/tokenHandler";
 
 export async function proxy(request: NextRequest) {
   // console.log(request.nextUrl.pathname);
   const pathname = request.nextUrl.pathname;
 
   // Get the access token from cookies
-  const cookieStore = await cookies();
-  const accessToken = request.cookies.get("accessToken")?.value || null;
+  // const cookieStore = await cookies();
+  // const accessToken = request.cookies.get("accessToken")?.value || null;
+  const accessToken = await getCookie("accessToken");
   // console.log(accessToken, "Access Token");
 
   // Verify the access token and extract the user role
@@ -28,8 +30,10 @@ export async function proxy(request: NextRequest) {
     // console.log(verifiedToken, "Verified Token");
 
     if (typeof verifiedToken === "string") {
-      cookieStore.delete("accessToken");
-      cookieStore.delete("refreshToken");
+      // cookieStore.delete("accessToken");
+      // cookieStore.delete("refreshToken");
+      await deleteCookie("accessToken");
+      await deleteCookie("refreshToken");
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
