@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { loginUser } from "@/services/auth/loginUser";
+import { toast } from "sonner";
 
-const LoginForm = ({redirect}: {redirect?: string}) => {
+const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
 
   const getFieldError = (fieldName: string) => {
@@ -20,11 +21,16 @@ const LoginForm = ({redirect}: {redirect?: string}) => {
     return null;
   };
   // console.log(state);
+
+  useEffect(() => {
+    if (state && !state.success && state.message) {
+      toast.error(state.message);
+    }
+  }, [state]);
+
   return (
     <form action={formAction}>
-      {redirect && (
-        <input type="hidden" name="redirect" value={redirect} />
-      )}
+      {redirect && <input type="hidden" name="redirect" value={redirect} />}
       <FieldGroup>
         <div className="grid grid-cols-1 gap-4">
           {/* Email */}
