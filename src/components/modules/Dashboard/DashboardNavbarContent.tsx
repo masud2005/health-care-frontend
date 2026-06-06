@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bell, Search } from "lucide-react";
+import { UserDropDown } from "./UserDropDown";
+import { UserInfo } from "@/types/userInterface";
 
-export const DashboardNavbarContent = () => {
+interface UserDropDownProps {
+  userInfo: UserInfo;
+}
+
+export const DashboardNavbarContent = ({ userInfo }: UserDropDownProps) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
       <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
@@ -23,7 +29,7 @@ export const DashboardNavbarContent = () => {
           </Button>
 
           {/* User Dropdown */}
-          {/* <UserDropdown userInfo={userInfo} /> */}
+          <UserDropDown userInfo={userInfo} />
         </div>
       </div>
     </header>
