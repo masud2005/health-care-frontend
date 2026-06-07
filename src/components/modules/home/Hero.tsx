@@ -67,7 +67,7 @@ export function Hero({
     <div className="w-full relative">
       {/* Radial Gradient Background from Bottom */}
       <div
-        className="absolute inset-0 z-0 "
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
             "radial-gradient(125% 125% at 50% 90%, #fff 30%, #155DFC 100%)",

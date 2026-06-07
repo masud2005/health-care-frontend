@@ -1,44 +1,43 @@
-"use client"
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { SheetTitle } from "@/components/ui/sheet";
+import { getIconComponent } from "@/lib/icon-mapper";
+import { cn } from "@/lib/utils";
 import { NavSection } from "@/types/dashboard.interface";
 import { UserInfo } from "@/types/userInterface";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
-import { getIconComponent } from "@/lib/icon-mapper";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface DashboardSidebarContentProps {
+interface DashboardMobileSidebarContentProps {
   userInfo: UserInfo;
-  dashboardHome: string;
   navItems: NavSection[];
+  dashboardHome: string;
 }
 
-export const DashboardSidebarContent = ({
+const DashboardMobileSidebar = ({
   userInfo,
+  navItems,
   dashboardHome,
-  navItems
-}: DashboardSidebarContentProps) => {
-
+}: DashboardMobileSidebarContentProps) => {
   const pathname = usePathname();
-
   return (
-    <div className="hidden md:flex h-full w-64 flex-col border-r bg-card">
-      {/* Logo/Brand at Top*/}
+    <div className=" flex h-full flex-col">
+      {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
-        <Link href={dashboardHome} className="flex items-center space-x-2">
+        <Link href={dashboardHome}>
           <span className="text-xl font-bold text-primary">PH Healthcare</span>
         </Link>
       </div>
+      <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
 
-      {/* Navigation Menu at Middle*/}
+      {/* Navigation */}
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-6">
           {navItems.map((section, sectionIdx) => (
             <div key={sectionIdx}>
               {section.title && (
-                <h4 className="mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <h4 className="mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase">
                   {section.title}
                 </h4>
               )}
@@ -55,16 +54,13 @@ export const DashboardSidebarContent = ({
                         "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                         isActive
                           ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                       )}
                     >
                       <Icon className="h-4 w-4" />
                       <span className="flex-1">{item.title}</span>
                       {item.badge && (
-                        <Badge
-                          variant={isActive ? "secondary" : "default"}
-                          className="ml-auto"
-                        >
+                        <Badge variant={isActive ? "secondary" : "default"}>
                           {item.badge}
                         </Badge>
                       )}
@@ -99,3 +95,5 @@ export const DashboardSidebarContent = ({
     </div>
   );
 };
+
+export default DashboardMobileSidebar;

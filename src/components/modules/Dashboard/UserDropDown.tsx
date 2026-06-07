@@ -18,9 +18,6 @@ interface UserDropDownProps {
 }
 
 export const UserDropDown = ({ userInfo }: UserDropDownProps) => {
-  const handleLogout = () => {
-    console.log("Log out called!");
-  };
 
   return (
     <DropdownMenu>
@@ -56,7 +53,6 @@ export const UserDropDown = ({ userInfo }: UserDropDownProps) => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={handleLogout}
           className="cursor-pointer text-red-600"
         >
           <LogoutButton />
