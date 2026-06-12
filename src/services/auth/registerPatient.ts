@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
-import z from "zod";
-import { loginUser } from "./loginUser";
-import { registerPatientValidationZodSchema } from "@/zod/auth.validation";
-import { zodValidator } from "@/lib/zodValidator";
 import { serverFetch } from "@/lib/server-fetch";
+import { zodValidator } from "@/lib/zodValidator";
+import { registerPatientValidationZodSchema } from "@/zod/auth.validation";
+import { loginUser } from "./loginUser";
 
 export const registerPatient = async (
   _currentState: any,
