@@ -12,20 +12,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import z from "zod";
 import { setCookie } from "./tokenHandler";
-
-const loginValidationZodSchema = z.object({
-  email: z.email({
-    message: "Email is required",
-  }),
-  password: z
-    .string("Password is required")
-    .min(6, {
-      error: "Password is required and must be at least 6 characters long",
-    })
-    .max(100, {
-      error: "Password must be at most 100 characters long",
-    }),
-});
+import { loginValidationZodSchema } from "@/zod/auth.validation";
+import { zodValidator } from "@/lib/zodValidator";
+import { serverFetch } from "@/lib/server-fetch";
 
 export const loginUser = async (
   _currentState: any,
@@ -40,27 +29,20 @@ export const loginUser = async (
       password: formData.get("password"),
     };
 
-    const validatedFields = loginValidationZodSchema.safeParse(loginData);
-
-    if (!validatedFields.success) {
-      return {
-        success: false,
-        errors: validatedFields.error.issues.map((issue) => {
-          return {
-            field: issue.path[0],
-            message: issue.message,
-          };
-        }),
-      };
+    const validationResult = zodValidator(loginData, loginValidationZodSchema);
+    if (!validationResult.success) {
+      return validationResult;
     }
+    const validatedPayload = validationResult.data;
 
-    const res = await fetch("http://localhost:5000/api/v1/auth/login", {
-      method: "POST",
-      body: JSON.stringify(loginData),
+    const res = await serverFetch.post("/auth/login", {
+      body: JSON.stringify(validatedPayload),
       headers: {
         "Content-Type": "application/json",
       },
     });
+
+    const result = await res.json();
 
     const setCookieHeaders = res.headers.getSetCookie();
 
@@ -115,6 +97,10 @@ export const loginUser = async (
       throw new Error("Invalid token");
     }
     const userRole: UserRole = verifiedToken.role;
+
+    if (!result.success) {
+      throw new Error(result.message || "Login failed");
+    }
 
     if (redirectTo) {
       const requestedPath = redirectTo.toString();
