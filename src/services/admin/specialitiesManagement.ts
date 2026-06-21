@@ -28,7 +28,9 @@ export async function createSpeciality(_prevState: any, formData: FormData) {
       body: newFormData,
     });
 
-    return response;
+    const result = response.json()
+
+    return result;
   } catch (error: any) {
     console.log(error);
     return {
